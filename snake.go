@@ -1,11 +1,14 @@
 package main
 
+import "container/list"
+
 type Snake struct {
 	Xsize int
 	Ysize int
 	head *snakeBody
 	justAte bool
-	Body []*snakeBody
+	Body *list.List
+	//Body []*snakeBody
 }
 
 type snakeBody struct {
@@ -16,7 +19,7 @@ type snakeBody struct {
 
 func NewSnake(x, y, length, xSize, ySize int) *Snake {
 	snake := Snake{
-		Body: []*snakeBody{},
+		Body: list.New(),
 		head: newSnakeBody(x, y, MoveRight),
 		Xsize: xSize,
 		Ysize: ySize,
@@ -27,7 +30,7 @@ func NewSnake(x, y, length, xSize, ySize int) *Snake {
 }
 
 func (snake *Snake) Length() int {
-	return len(snake.Body)
+	return snake.Body.Len()
 }
 
 type CoordinateDelta struct {
@@ -57,8 +60,6 @@ func (snake *Snake) SetMovement(delta CoordinateDelta) {
 func (snake *Snake) Move() {
 	lastMovement := snake.head.nextMovement
 
-	iterations := len(snake.Body)
-
 	// MOVE HEAD
 	snake.head.X += snake.head.nextMovement.X
 	snake.head.Y += snake.head.nextMovement.Y
@@ -67,24 +68,29 @@ func (snake *Snake) Move() {
 	snake.head.Y = Mod(snake.head.Y, snake.Ysize)
 
 	if snake.justAte {
+		snake.Body.PushFront(
+			newSnakeBody(
+				snake.head.X,
+				snake.head.Y,
+				snake.head.nextMovement,
+			),
+		)
 		snake.justAte = false
 
 		return
+	} else {
+		endOfSnakeElement := snake.Body.Back()
+		endOfSnake, ok := endOfSnakeElement.Value.(snakeBody)
+		if ok {
+			endOfSnake
+		} else {
+			panic("Not a snake body!")
+		}
+
+		snake.Body.MoveToFront(endOfSnakeElement)
 	}
 
 	// MOVE BODY
-	for i := 0; i < iterations; i++ {
-		snakeBody := snake.Body[i]
-		snakeBody.X += snakeBody.nextMovement.X
-		snakeBody.Y += snakeBody.nextMovement.Y
-
-		nextLastMovement := snakeBody.nextMovement
-		snakeBody.nextMovement = lastMovement
-		lastMovement = nextLastMovement
-
-		snakeBody.X = Mod(snakeBody.X, snake.Xsize)
-		snakeBody.Y = Mod(snakeBody.Y, snake.Ysize)
-	}
 }
 
 //func (snakeBody *snakeBody) Move(delta CoordinateDelta) {
@@ -93,11 +99,6 @@ func (snake *Snake) Move() {
 //}
 
 func (snake *Snake) eat() {
-	snake.Body = append(snake.Body, newSnakeBody(
-		snake.head.X,
-		snake.head.Y,
-		snake.head.nextMovement,
-		))
 	snake.justAte = true
 }
 
@@ -112,6 +113,6 @@ func newSnakeBody(x, y int, nextMovement CoordinateDelta) *snakeBody {
 func generateSnakeBody(snake *Snake, length int) {
 	for i := length; i > 0; i-- {
 		snakeBody := newSnakeBody(Mod(snake.head.X - i, snake.Xsize), Mod(snake.head.Y, snake.Ysize), MoveRight)
-		snake.Body = append(snake.Body, snakeBody)
+		snake.Body.PushBack(snakeBody)
 	}
 }
