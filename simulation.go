@@ -7,23 +7,23 @@ import (
 )
 
 type simulation struct {
-	renderer Renderer
-	snake    *Snake
-	food *Food
-	gridFactory *GridFactory
+	renderer            Renderer
+	snake               *Snake
+	food                *Food
+	gridFactory         *GridFactory
 	millisecondsPerTick time.Duration
-	tick int
-	score int
-	done chan bool
+	tick                int
+	score               int
+	done                chan bool
 }
 
 func NewSimulation(renderer Renderer, snake *Snake, gridFactory *GridFactory, ticksPerSecond int) simulation {
 	return simulation{
-		renderer: renderer,
-		snake: snake,
-		gridFactory: gridFactory,
+		renderer:            renderer,
+		snake:               snake,
+		gridFactory:         gridFactory,
 		millisecondsPerTick: time.Duration(1000 / ticksPerSecond),
-		done: make(chan bool, 1),
+		done:                make(chan bool, 1),
 	}
 }
 
@@ -38,9 +38,9 @@ func (simulation *simulation) Start(wg *sync.WaitGroup) {
 
 	for {
 		select {
-		case <- simulation.done:
+		case <-simulation.done:
 			return
-		case _ = <- ticker.C:
+		case _ = <-ticker.C:
 			simulation.Tick()
 		}
 	}
@@ -54,9 +54,11 @@ func (simulation *simulation) Tick() {
 	simulation.tick++
 	snake := simulation.snake
 
-	movementNumber := simulation.tick % len(movements) + 3
+	movementNumber := simulation.tick%len(movements) + 3
 
-	if movementNumber < len(movements) {snake.SetMovement(movements[movementNumber])}
+	if movementNumber < len(movements) {
+		snake.SetMovement(movements[movementNumber])
+	}
 
 	snake.Move()
 	simulation.checkFood()

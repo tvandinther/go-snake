@@ -3,23 +3,23 @@ package main
 import "container/list"
 
 type Snake struct {
-	Xsize int
-	Ysize int
-	head *snakeBody
+	Xsize   int
+	Ysize   int
+	head    *snakeBody
 	justAte bool
-	Body *list.List
+	Body    *list.List
 }
 
 type snakeBody struct {
-	X int
-	Y int
+	X            int
+	Y            int
 	nextMovement CoordinateDelta
 }
 
 func NewSnake(x, y, length, xSize, ySize int) *Snake {
 	snake := Snake{
-		Body: list.New(),
-		head: newSnakeBody(x, y, MoveRight),
+		Body:  list.New(),
+		head:  newSnakeBody(x, y, MoveRight),
 		Xsize: xSize,
 		Ysize: ySize,
 	}
@@ -107,15 +107,15 @@ func (snake *Snake) eat() {
 
 func newSnakeBody(x, y int, nextMovement CoordinateDelta) *snakeBody {
 	return &snakeBody{
-		X: x,
-		Y: y,
+		X:            x,
+		Y:            y,
 		nextMovement: nextMovement,
 	}
 }
 
 func generateSnakeBody(snake *Snake, length int) {
 	for i := 0; i < length; i++ {
-		snakeBody := newSnakeBody(Mod(snake.head.X - i, snake.Xsize), Mod(snake.head.Y, snake.Ysize), MoveRight)
+		snakeBody := newSnakeBody(Mod(snake.head.X-i, snake.Xsize), Mod(snake.head.Y, snake.Ysize), MoveRight)
 		snake.Body.PushBack(snakeBody)
 	}
 }

@@ -7,20 +7,20 @@ import (
 )
 
 type consoleRenderer struct {
-	empty string
+	empty     string
 	snakeHead string
 	snakeBody string
-	food string
-	border string
+	food      string
+	border    string
 }
 
 func NewConsoleRenderer() *consoleRenderer {
 	return &consoleRenderer{
-		empty: "  ",
+		empty:     "  ",
 		snakeBody: "()",
 		snakeHead: "{}",
-		food: "><",
-		border: "##",
+		food:      "><",
+		border:    "##",
 	}
 }
 
@@ -29,11 +29,11 @@ func (renderer *consoleRenderer) Render(gridPtr *Grid, score int) {
 
 	width := len((*gridPtr)[0])
 
-	gridString += strings.Repeat(renderer.border, width + 2)
+	gridString += strings.Repeat(renderer.border, width+2)
 	gridString += "\n" + renderer.border
 
-	for i := 0 ; i < len(*gridPtr); i++ {
-		for j := 0 ; j < len((*gridPtr)[i]); j++ {
+	for i := 0; i < len(*gridPtr); i++ {
+		for j := 0; j < len((*gridPtr)[i]); j++ {
 			var square string
 			switch (*gridPtr)[j][i] {
 			case EmptySquare:
@@ -50,11 +50,10 @@ func (renderer *consoleRenderer) Render(gridPtr *Grid, score int) {
 
 		gridString += renderer.border + "\n" + renderer.border
 	}
-	gridString += strings.Repeat(renderer.border, width + 1)
+	gridString += strings.Repeat(renderer.border, width+1)
 	gridString += "\n"
 
 	scoreString := fmt.Sprintf("            Score: %d", score)
-
 
 	finalPrint := gridString + scoreString
 	renderer.Clear()

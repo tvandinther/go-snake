@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func SnakeGame(xSize, ySize, ticksPerSecond int)  {
+func SnakeGame(xSize, ySize, ticksPerSecond int) {
 	snake := NewSnake(5, 5, 10, xSize, ySize)
 
 	gridFactory := NewGridFactory(xSize, ySize)
