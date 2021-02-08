@@ -15,8 +15,9 @@ func NewGrid(rows, cols int) *Grid {
 func (grid *Grid) AddSnake(snake *Snake) {
 	for i := 0; i < len(snake.Body); i++ {
 		snakeBody := *snake.Body[i]
-		grid.setSquare(snakeBody.X, snakeBody.Y, SnakeSquare)
+		grid.setSquare(snakeBody.X, snakeBody.Y, SnakeBodySquare)
 	}
+	grid.setSquare(snake.head.X, snake.head.Y, SnakeHeadSquare)
 }
 
 func (grid *Grid) AddFood(food *Food) {
@@ -31,6 +32,7 @@ type SquareType int
 
 const (
 	EmptySquare SquareType = iota
-	SnakeSquare
+	SnakeHeadSquare
+	SnakeBodySquare
 	FoodSquare
 )

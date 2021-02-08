@@ -8,7 +8,8 @@ import (
 
 type consoleRenderer struct {
 	empty string
-	snake string
+	snakeHead string
+	snakeBody string
 	food string
 	border string
 }
@@ -16,7 +17,8 @@ type consoleRenderer struct {
 func NewConsoleRenderer() *consoleRenderer {
 	return &consoleRenderer{
 		empty: "  ",
-		snake: "()",
+		snakeBody: "()",
+		snakeHead: "{}",
 		food: "><",
 		border: "##",
 	}
@@ -36,8 +38,10 @@ func (renderer *consoleRenderer) Render(gridPtr *Grid) {
 			switch (*gridPtr)[j][i] {
 			case EmptySquare:
 				square = renderer.empty
-			case SnakeSquare:
-				square = renderer.snake
+			case SnakeHeadSquare:
+				square = renderer.snakeHead
+			case SnakeBodySquare:
+				square = renderer.snakeBody
 			case FoodSquare:
 				square = renderer.food
 			}
