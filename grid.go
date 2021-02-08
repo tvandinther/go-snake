@@ -12,15 +12,19 @@ func NewGrid(rows, cols int) *Grid {
 	return &grid
 }
 
-func (grid Grid) AddSnake(snake *snake) {
+func (grid *Grid) AddSnake(snake *Snake) {
 	for i := 0; i < len(snake.Body); i++ {
 		snakeBody := *snake.Body[i]
 		grid.setSquare(snakeBody.X, snakeBody.Y, SnakeSquare)
 	}
 }
 
-func (grid Grid) setSquare(x, y int, squareType SquareType) {
-	grid[x][y] = squareType
+func (grid *Grid) AddFood(food *Food) {
+	grid.setSquare(food.X, food.Y, FoodSquare)
+}
+
+func (grid *Grid) setSquare(x, y int, squareType SquareType) {
+	(*grid)[x][y] = squareType
 }
 
 type SquareType int

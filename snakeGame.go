@@ -1,64 +1,28 @@
 package main
 
 import (
-	//"github.com/gdamor/tcell"
+	"sync"
 	"time"
 )
 
 func SnakeGame(xSize, ySize, ticksPerSecond int)  {
 	snake := NewSnake(5, 5, 10, xSize, ySize)
 
-	grid := NewGrid(xSize, ySize)
-	grid.AddSnake(snake)
+	gridFactory := NewGridFactory(xSize, ySize)
+
 	var renderer Renderer
 	renderer = NewConsoleRenderer()
-	renderer.Render(grid)
 
-	millisecondsPerTick := time.Duration(1000 / ticksPerSecond)
-	ticker := time.NewTicker(millisecondsPerTick * time.Millisecond)
-	defer ticker.Stop()
-	done := make(chan bool)
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	simulation := NewSimulation(renderer, snake, gridFactory, ticksPerSecond)
+	go simulation.Start(&wg)
 
 	go func() {
-		time.Sleep(10 * time.Second)
-		done <- true
+		time.Sleep(20 * time.Second)
+		simulation.Stop()
 	}()
 
-	i := 0
-	movements := []CoordinateDelta{
-		MoveDown,
-		MoveDown,
-		MoveRight,
-		MoveRight,
-		MoveRight,
-		MoveDown,
-		MoveDown,
-		MoveDown,
-		MoveLeft,
-		MoveLeft,
-		MoveLeft,
-		MoveUp,
-		MoveUp,
-	}
-
-	for {
-		select {
-
-		case <- done:
-		return
-
-		case _ = <-ticker.C:
-		if i < len(movements) {snake.SetMovement(movements[i])}
-
-		snake.Move()
-
-		grid := NewGrid(xSize, ySize)
-		grid.AddSnake(snake)
-		var renderer Renderer
-		renderer = NewConsoleRenderer()
-		renderer.Render(grid)
-
-		i++
-		}
-	}
+	wg.Wait()
 }

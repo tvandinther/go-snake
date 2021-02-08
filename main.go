@@ -1,5 +1,11 @@
 package main
 
+import (
+	"math/rand"
+	"time"
+)
+
 func main() {
-	SnakeGame(15, 15, 2)
+	rand.Seed(time.Now().UTC().UnixNano())
+	SnakeGame(15, 15, 10)
 }

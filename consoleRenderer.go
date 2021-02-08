@@ -17,12 +17,12 @@ func NewConsoleRenderer() *consoleRenderer {
 	return &consoleRenderer{
 		empty: "  ",
 		snake: "()",
-		food: "{}",
+		food: "><",
 		border: "##",
 	}
 }
 
-func (renderer consoleRenderer) Render(gridPtr *Grid) {
+func (renderer *consoleRenderer) Render(gridPtr *Grid) {
 	var gridString string
 
 	width := len((*gridPtr)[0])
@@ -53,7 +53,7 @@ func (renderer consoleRenderer) Render(gridPtr *Grid) {
 	fmt.Print(gridString)
 }
 
-func (renderer consoleRenderer) Clear() {
+func (renderer *consoleRenderer) Clear() {
 	//cmd := exec.Command("clear")
 	//cmd.Stdout = os.Stdout
 	//cmd.Run()

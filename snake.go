@@ -1,6 +1,6 @@
 package main
 
-type snake struct {
+type Snake struct {
 	Xsize int
 	Ysize int
 	head *snakeBody
@@ -13,8 +13,8 @@ type snakeBody struct {
 	nextMovement CoordinateDelta
 }
 
-func NewSnake(x, y, length, xSize, ySize int) *snake {
-	snake := snake{
+func NewSnake(x, y, length, xSize, ySize int) *Snake {
+	snake := Snake{
 		Body: []*snakeBody{},
 		head: newSnakeBody(x, y, MoveRight),
 		Xsize: xSize,
@@ -25,7 +25,7 @@ func NewSnake(x, y, length, xSize, ySize int) *snake {
 	return &snake
 }
 
-func (snake snake) Length() int {
+func (snake *Snake) Length() int {
 	return len(snake.Body)
 }
 
@@ -49,11 +49,11 @@ var (
 	}
 )
 
-func (snake *snake) SetMovement(delta CoordinateDelta) {
+func (snake *Snake) SetMovement(delta CoordinateDelta) {
 	snake.head.nextMovement = delta
 }
 
-func (snake *snake) Move() {
+func (snake *Snake) Move() {
 	lastMovement := snake.head.nextMovement
 
 	for i := 0; i < len(snake.Body); i++ {
@@ -78,7 +78,7 @@ func newSnakeBody(x, y int, nextMovement CoordinateDelta) *snakeBody {
 	}
 }
 
-func generateSnakeBody(snake *snake, length int) {
+func generateSnakeBody(snake *Snake, length int) {
 	for i := 0; i < length; i++ {
 		snakeBody := newSnakeBody(Mod(snake.head.X - i, snake.Xsize), Mod(snake.head.Y, snake.Ysize), MoveRight)
 		if i == 0 {snake.head = snakeBody}
