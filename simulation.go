@@ -89,6 +89,7 @@ func (simulation *simulation) checkFood() {
 
 	if snakeHead.X == food.X && snakeHead.Y == food.Y {
 		simulation.score++
+		simulation.snake.eat()
 		simulation.setFood()
 	}
 }

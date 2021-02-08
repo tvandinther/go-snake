@@ -4,6 +4,7 @@ type Snake struct {
 	Xsize int
 	Ysize int
 	head *snakeBody
+	justAte bool
 	Body []*snakeBody
 }
 
@@ -56,7 +57,23 @@ func (snake *Snake) SetMovement(delta CoordinateDelta) {
 func (snake *Snake) Move() {
 	lastMovement := snake.head.nextMovement
 
-	for i := 0; i < len(snake.Body); i++ {
+	iterations := len(snake.Body)
+
+	// MOVE HEAD
+	snake.head.X += snake.head.nextMovement.X
+	snake.head.Y += snake.head.nextMovement.Y
+
+	snake.head.X = Mod(snake.head.X, snake.Xsize)
+	snake.head.Y = Mod(snake.head.Y, snake.Ysize)
+
+	if snake.justAte {
+		snake.justAte = false
+
+		return
+	}
+
+	// MOVE BODY
+	for i := 0; i < iterations; i++ {
 		snakeBody := snake.Body[i]
 		snakeBody.X += snakeBody.nextMovement.X
 		snakeBody.Y += snakeBody.nextMovement.Y
@@ -70,6 +87,20 @@ func (snake *Snake) Move() {
 	}
 }
 
+//func (snakeBody *snakeBody) Move(delta CoordinateDelta) {
+//	snakeBody.X += snakeBody.nextMovement.X
+//	snakeBody.Y += snakeBody.nextMovement.Y
+//}
+
+func (snake *Snake) eat() {
+	snake.Body = append(snake.Body, newSnakeBody(
+		snake.head.X,
+		snake.head.Y,
+		snake.head.nextMovement,
+		))
+	snake.justAte = true
+}
+
 func newSnakeBody(x, y int, nextMovement CoordinateDelta) *snakeBody {
 	return &snakeBody{
 		X: x,
@@ -79,9 +110,8 @@ func newSnakeBody(x, y int, nextMovement CoordinateDelta) *snakeBody {
 }
 
 func generateSnakeBody(snake *Snake, length int) {
-	for i := 0; i < length; i++ {
+	for i := length; i > 0; i-- {
 		snakeBody := newSnakeBody(Mod(snake.head.X - i, snake.Xsize), Mod(snake.head.Y, snake.Ysize), MoveRight)
-		if i == 0 {snake.head = snakeBody}
 		snake.Body = append(snake.Body, snakeBody)
 	}
 }
