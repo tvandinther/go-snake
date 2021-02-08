@@ -1,6 +1,6 @@
 package main
 
 type Renderer interface {
-	Render(grid *Grid)
+	Render(grid *Grid, score int)
 	Clear()
 }

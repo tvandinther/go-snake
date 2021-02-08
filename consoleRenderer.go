@@ -24,7 +24,7 @@ func NewConsoleRenderer() *consoleRenderer {
 	}
 }
 
-func (renderer *consoleRenderer) Render(gridPtr *Grid) {
+func (renderer *consoleRenderer) Render(gridPtr *Grid, score int) {
 	var gridString string
 
 	width := len((*gridPtr)[0])
@@ -53,8 +53,12 @@ func (renderer *consoleRenderer) Render(gridPtr *Grid) {
 	gridString += strings.Repeat(renderer.border, width + 1)
 	gridString += "\n"
 
+	scoreString := fmt.Sprintf("            Score: %d", score)
+
+
+	finalPrint := gridString + scoreString
 	renderer.Clear()
-	fmt.Print(gridString)
+	fmt.Println(finalPrint)
 }
 
 func (renderer *consoleRenderer) Clear() {

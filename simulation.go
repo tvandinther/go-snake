@@ -12,6 +12,7 @@ type simulation struct {
 	gridFactory *GridFactory
 	millisecondsPerTick time.Duration
 	tick int
+	score int
 	done chan bool
 }
 
@@ -51,20 +52,22 @@ func (simulation *simulation) Stop() {
 func (simulation *simulation) Tick() {
 	simulation.tick++
 
-		snake := simulation.snake
+	snake := simulation.snake
 
 	movementNumber := simulation.tick % len(movements) + 3
 
 	if movementNumber < len(movements) {snake.SetMovement(movements[movementNumber])}
+
+	simulation.checkFood()
 	snake.Move()
 	simulation.display()
 }
 
 func (simulation *simulation) setFood() {
-	for food := NewFood(simulation.gridFactory.xSize, simulation.gridFactory.ySize);
-	!isBodyCollision(food, simulation.snake)
-	{
-		food = NewFood(simulation.gridFactory.xSize, simulation.gridFactory.ySize)
+	var ok bool
+	for ok {
+		food := NewFood(simulation.gridFactory.xSize, simulation.gridFactory.ySize)
+		ok = !isBodyCollision(food, simulation.snake)
 	}
 }
 
@@ -85,6 +88,7 @@ func (simulation *simulation) checkFood() {
 	food := simulation.food
 
 	if snakeHead.X == food.X && snakeHead.Y == food.Y {
+		simulation.score++
 		simulation.setFood()
 	}
 }
@@ -94,5 +98,5 @@ func (simulation *simulation) display() {
 	grid.AddSnake(simulation.snake)
 	grid.AddFood(simulation.food)
 
-	simulation.renderer.Render(grid)
+	simulation.renderer.Render(grid, simulation.score)
 }
