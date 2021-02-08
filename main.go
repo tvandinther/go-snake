@@ -7,5 +7,5 @@ import (
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
-	SnakeGame(15, 15, 10)
+	SnakeGame(15, 15, 20)
 }

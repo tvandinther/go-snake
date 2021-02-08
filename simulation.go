@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -51,33 +52,39 @@ func (simulation *simulation) Stop() {
 
 func (simulation *simulation) Tick() {
 	simulation.tick++
-
 	snake := simulation.snake
 
 	movementNumber := simulation.tick % len(movements) + 3
 
 	if movementNumber < len(movements) {snake.SetMovement(movements[movementNumber])}
 
-	simulation.checkFood()
 	snake.Move()
+	simulation.checkFood()
 	simulation.display()
 }
 
 func (simulation *simulation) setFood() {
-	var ok bool
+	var food *Food
+	ok := true
+
 	for ok {
-		food := NewFood(simulation.gridFactory.xSize, simulation.gridFactory.ySize)
-		ok = !isBodyCollision(food, simulation.snake)
+		food = NewFood(simulation.gridFactory.xSize, simulation.gridFactory.ySize)
+		ok = isBodyCollision(food, simulation.snake)
 	}
+
+	simulation.food = food
 }
 
 func isBodyCollision(food *Food, snake *Snake) bool {
-	snakeBody := snake.Body
-
-	for i := 0; i < len(snakeBody); i++ {
-		snakeBodySegment := snakeBody[i]
-		if food.X == snakeBodySegment.X && food.Y == snakeBodySegment.Y {
-			return true
+	fmt.Println(food.X, food.Y)
+	for e := snake.Body.Front(); e != nil; e = e.Next() {
+		body, ok := e.Value.(*snakeBody)
+		if ok {
+			if food.X == body.X && food.Y == body.Y {
+				return true
+			}
+		} else {
+			panic(e.Value)
 		}
 	}
 	return false

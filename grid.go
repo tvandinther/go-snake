@@ -13,9 +13,13 @@ func NewGrid(rows, cols int) *Grid {
 }
 
 func (grid *Grid) AddSnake(snake *Snake) {
-	for i := 0; i < len(snake.Body); i++ {
-		snakeBody := *snake.Body[i]
-		grid.setSquare(snakeBody.X, snakeBody.Y, SnakeBodySquare)
+	for e := snake.Body.Front(); e != nil; e = e.Next() {
+		body, ok := e.Value.(*snakeBody)
+		if ok {
+			grid.setSquare(body.X, body.Y, SnakeBodySquare)
+		} else {
+			panic("Not a snake body!")
+		}
 	}
 	grid.setSquare(snake.head.X, snake.head.Y, SnakeHeadSquare)
 }
