@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type simulation struct {
+type Simulation struct {
 	renderer            Renderer
 	snake               *Snake
 	food                *Food
@@ -17,8 +17,8 @@ type simulation struct {
 	done                chan bool
 }
 
-func NewSimulation(renderer Renderer, snake *Snake, gridFactory *GridFactory, ticksPerSecond int) simulation {
-	return simulation{
+func NewSimulation(renderer Renderer, snake *Snake, gridFactory *GridFactory, ticksPerSecond int) Simulation {
+	return Simulation{
 		renderer:            renderer,
 		snake:               snake,
 		gridFactory:         gridFactory,
@@ -27,7 +27,7 @@ func NewSimulation(renderer Renderer, snake *Snake, gridFactory *GridFactory, ti
 	}
 }
 
-func (simulation *simulation) Start(wg *sync.WaitGroup) {
+func (simulation *Simulation) Start(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	simulation.food = NewFood(simulation.gridFactory.xSize, simulation.gridFactory.ySize)
@@ -46,11 +46,11 @@ func (simulation *simulation) Start(wg *sync.WaitGroup) {
 	}
 }
 
-func (simulation *simulation) Stop() {
+func (simulation *Simulation) Stop() {
 	simulation.done <- true
 }
 
-func (simulation *simulation) Tick() {
+func (simulation *Simulation) Tick() {
 	simulation.tick++
 	snake := simulation.snake
 
@@ -65,7 +65,7 @@ func (simulation *simulation) Tick() {
 	simulation.display()
 }
 
-func (simulation *simulation) setFood() {
+func (simulation *Simulation) setFood() {
 	var food *Food
 	ok := true
 
@@ -92,7 +92,7 @@ func isBodyCollision(food *Food, snake *Snake) bool {
 	return false
 }
 
-func (simulation *simulation) checkFood() {
+func (simulation *Simulation) checkFood() {
 	snakeHead := simulation.snake.head
 	food := simulation.food
 
@@ -103,10 +103,10 @@ func (simulation *simulation) checkFood() {
 	}
 }
 
-func (simulation *simulation) display() {
+func (simulation *Simulation) display() {
 	grid := simulation.gridFactory.GenerateBlankGrid()
 	grid.AddSnake(simulation.snake)
 	grid.AddFood(simulation.food)
 
-	simulation.renderer.Render(grid, simulation.score)
+	simulation.renderer.Render(simulation)
 }
